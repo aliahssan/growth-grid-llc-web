@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+// TODO: Import your custom database client here
+// import { db } from "@/lib/db";
 
 const postSchema = z.object({
   title: z.string().min(4, "Title must be at least 4 characters").max(120),
@@ -54,16 +55,13 @@ export async function createPostAction(
       };
     }
 
-    await prisma.post.create({
-      data: {
-        title: result.data.title,
-        content: result.data.content,
-        status: result.data.status,
-        authorId: session.user.id,
-        publishedAt:
-          result.data.status === "PUBLISHED" ? new Date() : undefined,
-      },
-    });
+    // TODO: Replace with your custom database query
+    // Example:
+    // const publishedAt = result.data.status === "PUBLISHED" ? new Date() : null;
+    // await db.query(
+    //   'INSERT INTO posts (title, content, status, author_id, published_at) VALUES ($1, $2, $3, $4, $5)',
+    //   [result.data.title, result.data.content, result.data.status, session.user.id, publishedAt]
+    // );
 
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/posts");

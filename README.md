@@ -14,8 +14,8 @@ This repository contains a complete, production-ready full-stack web application
 - **Icons:** Lucide React
 
 **Backend:**
-- **Database:** PostgreSQL with Prisma ORM
-- **Authentication:** NextAuth.js v5 with database sessions
+- **Database:** PostgreSQL with manual migrations
+- **Authentication:** NextAuth.js v5 with JWT sessions
 - **API:** RESTful endpoints with Server Actions
 - **Email:** SendGrid integration
 - **File Storage:** AWS S3 with presigned URLs
@@ -55,9 +55,8 @@ npm install
 cp .env.example .env.local
 # Edit .env.local with your values
 
-# Set up database
-npm run db:push
-npm run db:seed
+# Set up database (run your migrations)
+# Create your database tables manually or with migration scripts
 
 # Start development server
 npm run dev
@@ -116,12 +115,10 @@ UPLOADS_BUCKET_NAME=your-bucket-name
 │   ├── analytics.ts              # Analytics tracking
 │   ├── auth.ts                   # NextAuth configuration
 │   ├── email.ts                  # SendGrid integration
-│   ├── prisma.ts                 # Prisma client
 │   ├── rate-limit.ts             # Rate limiting
 │   ├── security.ts               # Security utilities
 │   ├── seo.ts                    # SEO helpers
 │   └── utils.ts                  # General utilities
-├── prisma/                       # Database schema & migrations
 ├── public/                       # Static assets
 ├── styles/                       # Global styles & design tokens
 ├── .github/workflows/            # CI/CD pipelines
@@ -158,7 +155,7 @@ UPLOADS_BUCKET_NAME=your-bucket-name
 ### Security Features
 - **Rate Limiting:** API protection against abuse
 - **Input Validation:** Zod schemas for all user inputs
-- **Authentication:** Session-based security
+- **Authentication:** JWT-based security
 - **Authorization:** Role-based access control
 - **HTTPS:** SSL/TLS encryption
 - **Security Headers:** CSP, HSTS, X-Frame-Options
@@ -174,13 +171,6 @@ npm run build            # Production build
 npm run start            # Production server
 npm run preview          # Build and preview locally
 
-# Database
-npm run db:generate      # Generate Prisma client
-npm run db:push          # Push schema changes
-npm run db:migrate       # Create migrations
-npm run db:seed          # Seed database
-npm run db:studio        # Open Prisma Studio
-
 # Quality
 npm run lint             # ESLint
 npm run lint:fix         # Fix linting issues
@@ -189,7 +179,6 @@ npm run type-check       # TypeScript validation
 # Testing
 npm run test:unit        # Unit tests
 npm run test:e2e         # E2E tests
-npm run test:coverage    # Test coverage
 
 # Deployment
 npm run vercel:build     # Build for Vercel
@@ -331,7 +320,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Next.js Team** - For the amazing React framework
 - **Vercel** - For hosting and deployment platform
-- **Prisma** - For the excellent ORM
 - **Tailwind CSS** - For utility-first styling
 - **shadcn/ui** - For beautiful component primitives
 
@@ -343,6 +331,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Built with ❤️ using Next.js, Prisma, and modern web technologies.**
+**Built with ❤️ using Next.js and modern web technologies.**
 
 *This project demonstrates production-ready full-stack development practices and serves as a comprehensive template for modern web applications.*

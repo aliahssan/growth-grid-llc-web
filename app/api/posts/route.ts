@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+// TODO: Import your custom database client here
+// import { db } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limit";
 
 const bodySchema = z.object({
@@ -19,10 +20,15 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const posts = await prisma.post.findMany({
-      orderBy: { createdAt: "desc" },
-      include: { author: { select: { email: true } } },
-    });
+    // TODO: Replace with your custom database query
+    // Example:
+    // const posts = await db.query(`
+    //   SELECT p.*, u.email as author_email
+    //   FROM posts p
+    //   JOIN users u ON p.author_id = u.id
+    //   ORDER BY p.created_at DESC
+    // `);
+    const posts: any[] = [];
 
     return NextResponse.json(posts);
   } catch (error) {
@@ -54,16 +60,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ errors: data.error.flatten() }, { status: 422 });
     }
 
-    const post = await prisma.post.create({
-      data: {
-        title: data.data.title,
-        content: data.data.content,
-        status: data.data.status,
-        authorId: session.user.id,
-        publishedAt:
-          data.data.status === "PUBLISHED" ? new Date() : undefined,
-      },
-    });
+    // TODO: Replace with your custom database query
+    // Example:
+    // const publishedAt = data.data.status === "PUBLISHED" ? new Date() : null;
+    // const post = await db.query(
+    //   'INSERT INTO posts (title, content, status, author_id, published_at) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    //   [data.data.title, data.data.content, data.data.status, session.user.id, publishedAt]
+    // );
+    const post = null;
 
     return NextResponse.json(post, { status: 201 });
   } catch (error) {

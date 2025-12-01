@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+// TODO: Import your custom database client here
+// import { db } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limit";
 
 export async function GET() {
@@ -22,16 +23,21 @@ export async function GET() {
       return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
     }
 
-    const [users, posts] = await Promise.all([
-      prisma.user.count(),
-      prisma.post.findMany({
-        orderBy: { createdAt: "desc" },
-        take: 5,
-        include: { author: { select: { name: true } } },
-      }),
-    ]);
+    // TODO: Replace with your custom database queries
+    // Example:
+    // const usersCount = await db.query('SELECT COUNT(*) FROM users');
+    // const recentPosts = await db.query(`
+    //   SELECT p.id, p.title, p.status, p.created_at, u.name as author_name
+    //   FROM posts p
+    //   JOIN users u ON p.author_id = u.id
+    //   ORDER BY p.created_at DESC
+    //   LIMIT 5
+    // `);
+    // const publishedCount = await db.query('SELECT COUNT(*) FROM posts WHERE published_at IS NOT NULL');
 
-    const published = posts.filter((post) => post.publishedAt).length;
+    const users = 0;
+    const posts: any[] = [];
+    const published = 0;
 
     return NextResponse.json({
       users,
@@ -39,8 +45,8 @@ export async function GET() {
         id: post.id,
         title: post.title,
         status: post.status,
-        createdAt: post.createdAt.toISOString(),
-        author: post.author,
+        createdAt: post.createdAt,
+        author: { name: post.author_name },
       })),
       published,
     });

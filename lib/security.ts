@@ -10,7 +10,7 @@ export function sanitizeInput(input: string): string {
     .trim()
 }
 
-// SQL injection prevention (additional layer beyond Prisma)
+// SQL injection prevention
 export function isSafeSQL(input: string): boolean {
   const dangerous = [
     /(\bUNION\b|\bSELECT\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bDROP\b|\bCREATE\b|\bALTER\b)/i,

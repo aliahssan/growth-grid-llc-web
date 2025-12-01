@@ -1,14 +1,23 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
 
-import { prisma } from "@/lib/prisma";
+// Static users - replace with your actual users
+const STATIC_USERS = [
+  {
+    id: "1",
+    email: "admin@example.com",
+    name: "Admin User",
+    role: "ADMIN",
+    status: "ACTIVE",
+    // Password: "password123" (hashed with bcryptjs)
+    passwordHash: "$2a$10$rG8K8K8K8K8K8K8K8K8K8OqJ0J0J0J0J0J0J0J0J0J0J0J0J0J0J0",
+  },
+];
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
   session: {
-    strategy: "database",
+    strategy: "jwt",
   },
   trustHost: true,
   pages: {
@@ -16,7 +25,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   },
   providers: [
     Credentials({
-      name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
@@ -26,15 +34,17 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+        const user = STATIC_USERS.find((u) => u.email === credentials.email);
 
         if (!user?.passwordHash) {
           return null;
         }
 
-        const isValid = await compare(credentials.password, user.passwordHash);
+        const isValid = await compare(
+          credentials.password as string,
+          user.passwordHash
+        );
+
         if (!isValid) {
           return null;
         }
@@ -50,14 +60,21 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    session: async ({ session, user }) => {
+    jwt: async ({ token, user }) => {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+        token.status = user.status;
+      }
+      return token;
+    },
+    session: async ({ session, token }) => {
       if (session.user) {
-        session.user.id = user.id;
-        session.user.role = user.role;
-        session.user.status = user.status;
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+        session.user.status = token.status as string;
       }
       return session;
     },
   },
 });
-

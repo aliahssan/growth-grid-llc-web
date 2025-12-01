@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+// TODO: Import your custom database client here
+// import { db } from "@/lib/db";
 
 const inviteSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -52,9 +53,9 @@ export async function inviteUserAction(
       };
     }
 
-    const existingUser = await prisma.user.findUnique({
-      where: { email: result.data.email },
-    });
+    // TODO: Replace with your custom database query
+    // Example: const existingUser = await db.query('SELECT * FROM users WHERE email = $1', [result.data.email]);
+    const existingUser: any = null;
 
     if (existingUser && existingUser.status !== "INVITED") {
       return {
@@ -64,18 +65,13 @@ export async function inviteUserAction(
       };
     }
 
-    await prisma.user.upsert({
-      where: { email: result.data.email },
-      update: {
-        role: result.data.role,
-        status: "INVITED",
-      },
-      create: {
-        email: result.data.email,
-        role: result.data.role,
-        status: "INVITED",
-      },
-    });
+    // TODO: Replace with your custom database query
+    // Example:
+    // if (existingUser) {
+    //   await db.query('UPDATE users SET role = $1, status = $2 WHERE email = $3', [result.data.role, 'INVITED', result.data.email]);
+    // } else {
+    //   await db.query('INSERT INTO users (email, role, status) VALUES ($1, $2, $3)', [result.data.email, result.data.role, 'INVITED']);
+    // }
 
     revalidatePath("/dashboard/users");
 

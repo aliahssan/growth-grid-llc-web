@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+// TODO: Import your custom database client here
+// import { db } from "@/lib/db";
 
 const createSchema = z.object({
   email: z.string().email(),
@@ -18,17 +19,9 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const users = await prisma.user.findMany({
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        status: true,
-        createdAt: true,
-      },
-    });
+    // TODO: Replace with your custom database query
+    // Example: const users = await db.query('SELECT id, email, name, role, status, created_at FROM users ORDER BY created_at DESC');
+    const users: any[] = [];
 
     return NextResponse.json(users);
   } catch (error) {
@@ -55,14 +48,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ errors: data.error.flatten() }, { status: 422 });
     }
 
-    const user = await prisma.user.create({
-      data: {
-        email: data.data.email,
-        name: data.data.name,
-        role: data.data.role,
-        status: "INVITED",
-      },
-    });
+    // TODO: Replace with your custom database query
+    // Example:
+    // const user = await db.query(
+    //   'INSERT INTO users (email, name, role, status) VALUES ($1, $2, $3, $4) RETURNING *',
+    //   [data.data.email, data.data.name, data.data.role, 'INVITED']
+    // );
+    const user = null;
 
     return NextResponse.json(user, { status: 201 });
   } catch (error) {

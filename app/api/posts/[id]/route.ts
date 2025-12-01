@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+// TODO: Import your custom database client here
+// import { db } from "@/lib/db";
 
 const updateSchema = z.object({
   title: z.string().min(4).max(120).optional(),
@@ -13,9 +14,9 @@ const updateSchema = z.object({
 type Params = { params: { id: string } };
 
 export async function GET(_request: Request, { params }: Params) {
-  const post = await prisma.post.findUnique({
-    where: { id: params.id },
-  });
+  // TODO: Replace with your custom database query
+  // Example: const post = await db.query('SELECT * FROM posts WHERE id = $1', [params.id]);
+  const post = null;
 
   if (!post) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -37,7 +38,10 @@ export async function PATCH(request: Request, { params }: Params) {
     return NextResponse.json({ errors: data.error.flatten() }, { status: 422 });
   }
 
-  const existing = await prisma.post.findUnique({ where: { id: params.id } });
+  // TODO: Replace with your custom database query
+  // Example: const existing = await db.query('SELECT * FROM posts WHERE id = $1', [params.id]);
+  const existing: any = null;
+
   if (!existing) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -45,18 +49,18 @@ export async function PATCH(request: Request, { params }: Params) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const post = await prisma.post.update({
-    where: { id: params.id },
-    data: {
-      ...data.data,
-      publishedAt:
-        data.data.status === "PUBLISHED"
-          ? new Date()
-          : data.data.status === "DRAFT"
-            ? null
-            : undefined,
-    },
-  });
+  // TODO: Replace with your custom database query
+  // Example:
+  // const publishedAt = data.data.status === "PUBLISHED"
+  //   ? new Date()
+  //   : data.data.status === "DRAFT"
+  //     ? null
+  //     : undefined;
+  // const post = await db.query(
+  //   'UPDATE posts SET title = COALESCE($1, title), content = COALESCE($2, content), status = COALESCE($3, status), published_at = COALESCE($4, published_at) WHERE id = $5 RETURNING *',
+  //   [data.data.title, data.data.content, data.data.status, publishedAt, params.id]
+  // );
+  const post = null;
 
   return NextResponse.json(post);
 }
@@ -67,7 +71,10 @@ export async function DELETE(_request: Request, { params }: Params) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const existing = await prisma.post.findUnique({ where: { id: params.id } });
+  // TODO: Replace with your custom database query
+  // Example: const existing = await db.query('SELECT * FROM posts WHERE id = $1', [params.id]);
+  const existing: any = null;
+
   if (!existing) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -76,10 +83,8 @@ export async function DELETE(_request: Request, { params }: Params) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  await prisma.post.delete({
-    where: { id: params.id },
-  });
+  // TODO: Replace with your custom database query
+  // Example: await db.query('DELETE FROM posts WHERE id = $1', [params.id]);
 
   return NextResponse.json({ success: true });
 }
-
