@@ -1,4 +1,4 @@
-# Growth Grid — Full-Stack Web Application
+# Growth Grid
 
 This repository contains a complete, production-ready full-stack web application built with modern technologies. The project demonstrates enterprise-grade development practices from initial setup through deployment and monitoring.
 
